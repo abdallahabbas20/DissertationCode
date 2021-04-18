@@ -1,0 +1,61 @@
+# For data pre-processing
+import pandas
+import numpy
+from keras.utils import np_utils
+from sklearn.preprocessing import LabelEncoder
+
+# Modules for bespoke model 
+from xgboost import XGBClassifier
+from sklearn.model_selection import StratifiedKFold
+from sklearn.model_selection import GridSearchCV
+from sklearn.model_selection import cross_val_score
+from sklearn.metrics import precision_score, recall_score, accuracy_score, roc_auc_score, roc_curve
+
+# View results of model
+from sklearn.metrics import confusion_matrix
+from sklearn.metrics import plot_confusion_matrix
+
+# Evaluate xgboost algorithm for classification
+from numpy import mean
+from numpy import std
+
+#Loads training dataset (85% of complete dataset that has been randomly split as described in Methods)   
+dataframe = pandas.read_csv("./final_dissertation_amd_train_dataset.csv", header=0)
+
+#Selecting the features and target label we will use to train the model
+dataframe = dataframe[["Age", 'Ethnicity', "Gender", "VA_ETDRS", "RPE_volume", "Intraretinal_fluid_volume", "Subretinal_fluid_volume", "Subretinal_hyper_reflect_volume", "Intraretinal_hyper_reflect_volume", "PED_volume", "VA_12months"]]
+
+#Converting to numpy array to carry out data pre-processing steps
+dataset = dataframe.values
+
+#Selecting feature columns
+X_train = dataset[:, 0:10]
+
+#Selecting final column (target labels)
+y_train = dataset[:,10]
+
+#Converting target labels to integers 
+y_train[y_train == "Above"] = 1
+y_train[y_train == "Below"] = 0
+y_train = y_train.astype('int')
+
+#Converting gender column from string format to integers
+gender_encoder = LabelEncoder()
+gender_encoder.fit(X_train[: , 2])
+encoded_gender = gender_encoder.transform(X_train[:, 2])
+ 
+#Converting ethnicity data from string format to integers 
+ethnicity_encoder = LabelEncoder()
+ethnicity_encoder.fit(X_train[: , 1])
+encoded_ethnicity = ethnicity_encoder.transform(X_train[:, 1])
+
+#One-hot encoding of the ethnicity data. 
+# This is done so that the algorithm does not wrongly infer an ordinal relationship by the integer encoding
+dummy_ethnicity = np_utils.to_categorical(encoded_ethnicity)
+
+X_train = numpy.delete(X_train, 1, 1)
+X_train = numpy.delete(X_train, 1, 1)
+X_train = numpy.c_[X_train, encoded_gender]
+X_train = numpy.c_[X_train, dummy_ethnicity]
+
+X_train = X_train.astype(float)
