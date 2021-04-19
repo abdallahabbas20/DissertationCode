@@ -1,0 +1,28 @@
+# Important: This is a continuation of Script 2 & 3 that we ran using a Jupyter Notebook. For simplicity we have separated them out by function here.
+
+from xgboost import XGBClassifier
+from xgboost import plot_tree, plot_importance
+import matplotlib.pyplot as plt
+
+# Calculating feature importance for XGBoost using SHAP
+
+import shap
+explainer = shap.TreeExplainer(model)
+shap_values = explainer.shap_values(X_test)
+shap.summary_plot(shap_values, X_test, plot_type='bar')
+
+# Extracting raw values and then normalising them to equal 1
+
+shap_sum = numpy.abs(shap_values).mean(axis=0)
+print(shap_sum)
+
+sum_to_normalise = sum(shap_sum)
+for i in range(len(shap_sum)):
+    shap_sum[i] = shap_sum[i]/sum_to_normalise
+    
+  
+# Displaying one of the decision trees that makes up the XGBoost model
+
+plot_tree(model, num_trees=20)
+
+plt.savefig('tree.png', dpi=800)
