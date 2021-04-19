@@ -1,0 +1,78 @@
+import json
+import tensorflow as tf
+import json
+import numpy as np
+import pandas 
+from witwidget.notebook.visualization import WitConfigBuilder
+from witwidget.notebook.visualization import WitWidget
+import requests
+import json
+
+column_names = ["Age", 'Ethnicity', "Gender", "VA_ETDRS", "RPE_volume", "Intraretinal_fluid_volume", "Subretinal_fluid_volume", 
+                "Subretinal_hyper_reflect_volume", "Intraretinal_hyper_reflect_volume", "PED_volume", "VA_12months", "Ethnic Group"]
+df = pandas.read_csv("./final_dissertation_amd_test_dataset_census.csv", names = column_names)
+
+records = json.loads(df.to_json(orient="records")) 
+
+# Custom prediction function to call to the served model.
+# The AutoML tables model has been exported and is locally served
+# as described at https://cloud.google.com/automl-tables/docs/model-export
+
+def custom_predict(examples):
+    # Send the predict request to the model served through docker.
+    
+    request_data = {"instances": examples}
+    response = requests.post("http://localhost:8080/predict", data=json.dumps(request_data))
+    
+    predictions = response.json()["predictions"]
+  
+    #Converting predictions into a list of lists to make predictions compatible with WIT
+    f_predictions = []
+    
+    for i in range(len(predictions)):
+        f_predictions.append(predictions[i]["scores"])
+
+    predictions = f_predictions
+
+    # The served model seems to return predictions as a list if multiple examples are provided,
+    # but if only one example is provided in the examples list, then the predictions is a single
+    # value, instead of a list of length 1. In that case, we turn it into a list of length 1
+    # before returning it, since WIT's API is to return a list of numbers for regression models.
+   
+    if not isinstance(predictions, list):
+        predictions = [predictions]
+
+    return predictions
+
+
+# Custom prediction function for the XGBoost model
+
+def custom_predict_2(examples):
+
+    to_predict = pandas.DataFrame.from_dict(examples)
+    to_predict = to_predict[["Age", 'Ethnicity', "Gender", "VA_ETDRS", "RPE_volume", "Intraretinal_fluid_volume", "Subretinal_fluid_volume", "Subretinal_hyper_reflect_volume", "Intraretinal_hyper_reflect_volume", "PED_volume"]]
+
+    X = to_predict.values
+   
+    #Encode and one-hot encode ethnicity
+    encoded_ethnicity = ethnicity_encoder.transform(X[:, 1])
+    dummy_ethnicity = np_utils.to_categorical(encoded_ethnicity)
+
+    #Encode and one-hot encode gender
+    encoded_gender = gender_encoder.transform(X[:, 2])
+
+ 
+    X = numpy.delete(X, 1, 1)
+    X = numpy.delete(X, 1, 1)
+    X = numpy.c_[X, encoded_gender]
+    X = numpy.c_[X, dummy_ethnicity]
+
+    X = X.astype(float)
+
+    predictions = model.predict_proba(X)
+
+    return predictions
+    
+
+# Display WIT - in this case on 1000 examples, for a regression model trying to predict the 'Balance' feature.
+WitWidget(WitConfigBuilder(records).set_custom_predict_fn(custom_predict).set_compare_custom_predict_fn(custom_predict_2).set_target_feature('VA_12months').set_label_vocab(["Below", "Above"]), height=800)
