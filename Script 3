@@ -1,0 +1,75 @@
+# IMPORTANT: This is a continuation of Script 2 that was all run using a Jupyter Notebook. For simplicity we have separated the code into separate files here. 
+
+# Baseline model with default hyperparameters
+model = XGBClassifier()
+cv = StratifiedKFold(n_splits=10)
+n_scores = cross_val_score(model, X_train, y_train, scoring='roc_auc', cv=cv, n_jobs=-1)
+# Report performance
+print('Accuracy: %.3f (%.3f)' % (mean(n_scores), std(n_scores)))
+
+# Define range of parameters to search through
+
+parameters = { 
+              'objective':['binary:logistic'],
+              'learning_rate': [0.05, 0.1, 0.2], #so called `eta` value
+              'max_depth': [1, 2, 3],
+              'min_child_weight': [1, 2, 3],
+              'silent': [1],
+              'subsample': [0.8, 0.9, 1.0],
+              'colsample_bytree': [0.8, 0.9, 1.0],
+              'n_estimators': [5, 10, 50, 75, 100], 
+                'gamma' : [0.0, 1.0, 2.0, 3.0]}
+
+clf = GridSearchCV(model, parameters, n_jobs=5, 
+                   cv=cv, 
+                   scoring='roc_auc',
+                   verbose=2, refit=True)
+
+clf.fit(X_train, y_train)
+
+# Check which hyperparameters were best 
+best_parameters = clf.best_params_
+print(best_parameters)
+
+# Check the best AUROC score achieved with these settings
+clf.best_score_
+
+# Define narrower range of parameters to search through
+
+parameters = { 
+              'objective':['binary:logistic'],
+              'learning_rate': [0.08, 0.1, 0.12], #so called `eta` value
+              'max_depth': [1, 2, 3],
+              'min_child_weight': [2.5, 3, 3.5],
+              'silent': [1],
+              'subsample': [0.95, 1.0],
+              'colsample_bytree': [0.75, 0.8, 0.85],
+              'n_estimators': [40, 50, 60], 
+                'gamma' : [0.8, 1.0, 1.2]}
+
+clf_finetuned = GridSearchCV(model, parameters, n_jobs=5, 
+                   cv=cv, 
+                   scoring='roc_auc',
+                   verbose=2, refit=True)
+
+clf_finetuned.fit(X_train, y_train)
+
+# Check which hyperparameters were best 
+best_parameters = clf_finetuned.best_params_
+print(best_parameters)
+
+# Check the best AUROC score achieved with these settings
+clf_finetuned.best_score_
+
+# Fitting models with optimal hyperparameters
+
+model = XGBClassifier(n_estimators=50, eta=0.1, max_depth=2, min_child_weight=3.5,use_label_encoder=False,subsample=1.0,colsample_bytree=0.8, gamma=0.8)
+model.fit(X_train, y_train)
+
+# Model predictions on test set 
+ypred_bst = model.predict(X_test)
+
+# View performance metrics on test set
+print("Precision = {}".format(precision_score(y_test, ypred_bst, average='macro', labels = [0,1])))
+print("Recall = {}".format(recall_score(y_test, ypred_bst, average='macro')))
+print("Accuracy = {}".format(accuracy_score(y_test, ypred_bst)))
