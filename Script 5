@@ -12,7 +12,7 @@ import json
 
 column_names = ["Age", 'Ethnicity', "Gender", "VA_ETDRS", "RPE_volume", "Intraretinal_fluid_volume", "Subretinal_fluid_volume", 
                 "Subretinal_hyper_reflect_volume", "Intraretinal_hyper_reflect_volume", "PED_volume", "VA_12months", "Ethnic Group"]
-df = pandas.read_csv("./final_dissertation_amd_test_dataset_census.csv", names = column_names)
+df = pandas.read_csv("./final_dissertation_amd_test_dataset.csv", names = column_names)
 
 records = json.loads(df.to_json(orient="records")) 
 
@@ -36,10 +36,10 @@ def custom_predict(examples):
 
     predictions = f_predictions
 
-    # The served model seems to return predictions as a list if multiple examples are provided,
+    # The served model returns predictions as a list if multiple examples are provided,
     # but if only one example is provided in the examples list, then the predictions is a single
     # value, instead of a list of length 1. In that case, we turn it into a list of length 1
-    # before returning it, since WIT's API is to return a list of numbers for regression models.
+    # before returning it (to be in line with what WIT API expects to receive).
    
     if not isinstance(predictions, list):
         predictions = [predictions]
@@ -76,5 +76,5 @@ def custom_predict_2(examples):
     return predictions
     
 
-# Display WIT - in this case on 1000 examples, for a regression model trying to predict the 'Balance' feature.
+# Display WIT 
 WitWidget(WitConfigBuilder(records).set_custom_predict_fn(custom_predict).set_compare_custom_predict_fn(custom_predict_2).set_target_feature('VA_12months').set_label_vocab(["Below", "Above"]), height=800)
