@@ -1,3 +1,5 @@
+############################# FEATURE IMPORTANCE FOR XGBOOST MODEL + VIISUALISING A TREE ################################
+
 # Important: This is a continuation of Script 2 & 3 that we ran using a Jupyter Notebook. For simplicity we have separated them out by function here.
 
 from xgboost import XGBClassifier
