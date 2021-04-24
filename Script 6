@@ -1,4 +1,6 @@
-#DELONGS TEST - following the method described in https://biasedml.com/roc-comparison/
+############################# DELONG'S TEST TO COMPARE TWO AUROC VALUES ################################
+
+# Here we utilise the method described in https://biasedml.com/roc-comparison/
 
 from matplotlib import pyplot as plt
 import scipy.stats as st
