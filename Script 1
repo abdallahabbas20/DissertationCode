@@ -1,7 +1,8 @@
+############################# STUDY COHORT SELECTION + APPLYING EXCLUSION CRITERIA ################################
+
 import csv
 
-# Open original CSV file that contains data from 169703 appointments attended by 3392 patients
-with open('amd_sample.csv') as csv_file:
+with open('amd_sample.csv') as csv_file:  # Opens original CSV file that contains data from 169703 appointments attended by 3392 patients
     csv_reader = csv.reader(csv_file, delimiter=',')
     header = []
     paired_rows = []
@@ -15,9 +16,9 @@ with open('amd_sample.csv') as csv_file:
 
             with open('amd_dissertation_dataset.csv', 'w', newline='') as file:  # Create new CSV for our study cohort
                 writer = csv.writer(file)
-                writer.writerow(header)
+                writer.writerow(header)   # add header to new file
 
-        else:  # i.e. for all rows other than the header execute following code
+        else:  # i.e. for all rows other than the header
 
             # Column 2 = DaysSinceBaseline
             # Column 4 = Ethnicity
@@ -26,7 +27,8 @@ with open('amd_sample.csv') as csv_file:
             # Column 25 = OCT scan measurement
 
             # Selects appointments that correspond to baseline, injection number 1
-            # and where VA or OCT measurements are not missing
+            # and where neither VA or OCT measurements are missing (exclusion criteria)
+            
             if len(paired_rows) == 0 and int(row[2]) == 0 and row[11] == "1" and row[18] != "" and row[25] != "":
                 if row[4] == "":  # If ethnicity column is blank replace with "Unknown"
                     row[4] = "Unknown"
@@ -35,36 +37,37 @@ with open('amd_sample.csv') as csv_file:
             # Column 1 is the anonymous ID
             # Column 5 is the eye (right/left)
 
-            # If we have a baseline already saved, this code segment looks for a future appointment for the same eye
-            # between 11-13 months in the future. Only appointments where VA measurement is not missing is selected.
+            # If we have a baseline appointment already saved, this code segment looks for a future appointment for the same 
+            # eye 11-13 months in the future. Only appointments where VA measurement is not missing is selected.
+            
             elif len(paired_rows) == 1 and row[1] == paired_rows[0][1] and row[5] == paired_rows[0][5] and \
                     (int(row[2]) > 334) and (int(row[2]) < 396) and row[18] != "":
                 paired_rows.append(row)
-
-                #  Here we assign outcome labels for our binary classification task
+               
                 if int(row[18]) >= 70:
-                    paired_rows[0].append("Above")
+                    paired_rows[0].append("Above")  # assigns outcome label of Above to patients with VA at 1 year ≥ 70
                 else:
-                    paired_rows[0].append("Below")
+                    paired_rows[0].append("Below")  # assigns outcome label of Below to patients with VA at 1 year < 70
 
-            # Checks if current appointment being iterated through is now a different patient or eye and resets.
+            # Checks if current appointment being iterated through is now a different patient or eye 
             elif len(paired_rows) == 1 and (row[1] != paired_rows[0][1] or row[5] != paired_rows[0][5]):
-                paired_rows = []
+                paired_rows = []  # reset
 
             # Check to see whether current appointment is actually closer to 365 days and replaces previous data if so.
             if len(paired_rows) == 2 and row[1] == paired_rows[0][1] and row[5] == paired_rows[0][5] and row[18] != "":
                 difference = abs(int(row[2]) - 365)
                 old_difference = abs(int(paired_rows[1][2]) - 365)
-                if difference < old_difference:
+                if difference < old_difference:  # if new appointment is  closer to 365 days, previous appointment is deleted and outcome labels are updated
                     del paired_rows[1]
                     paired_rows.append(row)
-                    if int(row[18]) >= 70:
-                        paired_rows[0][-1] = "Above"
+                    if int(row[18]) >= 70:  
+                        paired_rows[0][-1] = "Above" 
                     else:
                         paired_rows[0][-1] = "Below"
 
             # If baseline appointment and suitable follow-up appointment has been found we add the baseline data
             # (along with the outcome label that was appended) to the new CSV file of our study cohort
+            
             if len(paired_rows) == 2 and (row[1] != paired_rows[0][1] or row[5] != paired_rows[0][5]):
                 with open('amd_dissertation_dataset.csv', 'a', newline='') as file:
                     writer = csv.writer(file)
