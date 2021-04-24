@@ -1,3 +1,5 @@
+############################# XGBOOST MODEL HYPERPARAMETER GRID SEARCH ################################
+
 # IMPORTANT: This is a continuation of Script 2 that was all run using a Jupyter Notebook. For simplicity we have separated the code into separate files here. 
 
 # Baseline model with default hyperparameters
