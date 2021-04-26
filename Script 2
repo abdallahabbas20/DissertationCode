@@ -7,15 +7,6 @@ from keras.utils import np_utils
 from sklearn.preprocessing import LabelEncoder
 
 
-
-# View results of model
-from sklearn.metrics import confusion_matrix
-from sklearn.metrics import plot_confusion_matrix
-
-# Evaluate xgboost algorithm for classification
-from numpy import mean
-from numpy import std
-
 #Loads training dataset (85% of complete dataset that has been randomly split as described in Methods)   
 dataframe = pandas.read_csv("./final_dissertation_amd_train_dataset.csv", header=0)
 
