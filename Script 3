@@ -2,6 +2,13 @@
 
 # IMPORTANT: This is a continuation of Script 2 that was all run using a Jupyter Notebook. For simplicity we have separated the code into separate files here. 
 
+# Modules to train bespoke model 
+from xgboost import XGBClassifier
+from sklearn.model_selection import StratifiedKFold
+from sklearn.model_selection import GridSearchCV
+from sklearn.model_selection import cross_val_score
+from sklearn.metrics import precision_score, recall_score, accuracy_score, roc_auc_score, roc_curve
+
 # Baseline model with default hyperparameters
 model = XGBClassifier()
 cv = StratifiedKFold(n_splits=10)
