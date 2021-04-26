@@ -6,12 +6,7 @@ import numpy
 from keras.utils import np_utils
 from sklearn.preprocessing import LabelEncoder
 
-# Modules to train bespoke model 
-from xgboost import XGBClassifier
-from sklearn.model_selection import StratifiedKFold
-from sklearn.model_selection import GridSearchCV
-from sklearn.model_selection import cross_val_score
-from sklearn.metrics import precision_score, recall_score, accuracy_score, roc_auc_score, roc_curve
+
 
 # View results of model
 from sklearn.metrics import confusion_matrix
