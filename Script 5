@@ -1,5 +1,8 @@
 ############################# USING THE WHAT-IF TOOL TO COMPARE OUR AUTOML AND BESPOKE MODELS ################################
 
+# We also kindly refer the interested reader to the Video attached in the Appendix of our study, for a step-by-step demonstration 
+# of how we were able to run the What-If Tool on an AutoML Tables model.
+
 import json
 import tensorflow as tf
 import json
