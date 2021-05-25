@@ -14,7 +14,7 @@ with open('amd_sample.csv') as csv_file:  # Opens original CSV file that contain
                 header.append(row[i])  # appends each column name into header list
             header.append("VA_12months")  # add new column (to be populated later) for VA at 12 months
 
-            with open('amd_dissertation_dataset.csv', 'w', newline='') as file:  # Create new CSV for our study cohort
+            with open('amd_dataset.csv', 'w', newline='') as file:  # Create new CSV for our study cohort
                 writer = csv.writer(file)
                 writer.writerow(header)   # add header to new file
 
@@ -69,7 +69,7 @@ with open('amd_sample.csv') as csv_file:  # Opens original CSV file that contain
             # (along with the outcome label that was appended) to the new CSV file of our study cohort
             
             if len(paired_rows) == 2 and (row[1] != paired_rows[0][1] or row[5] != paired_rows[0][5]):
-                with open('amd_dissertation_dataset.csv', 'a', newline='') as file:
+                with open('amd_dataset.csv', 'a', newline='') as file:
                     writer = csv.writer(file)
                     writer.writerow(paired_rows[0])
 
