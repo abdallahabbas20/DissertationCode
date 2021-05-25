@@ -1,6 +1,6 @@
 ############################# USING THE WHAT-IF TOOL TO COMPARE OUR AUTOML AND BESPOKE MODELS ################################
 
-# We also kindly refer the interested reader to the Video attached in the Appendix of our study, for a step-by-step demonstration 
+# We also kindly refer the interested reader to the Video attached in the Appendix of our study, for an outline  
 # of how we were able to run the What-If Tool on an AutoML Tables model.
 
 import json
@@ -15,7 +15,7 @@ import json
 
 column_names = ["Age", 'Ethnicity', "Gender", "VA_ETDRS", "RPE_volume", "Intraretinal_fluid_volume", "Subretinal_fluid_volume", 
                 "Subretinal_hyper_reflect_volume", "Intraretinal_hyper_reflect_volume", "PED_volume", "VA_12months", "Ethnic Group"]
-df = pandas.read_csv("./final_dissertation_amd_test_dataset.csv", names = column_names)
+df = pandas.read_csv("./final_amd_test_dataset.csv", names = column_names)
 
 records = json.loads(df.to_json(orient="records")) 
 
