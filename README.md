@@ -1,4 +1,4 @@
-# DissertationCode
+# AMD research code
 
 This repository contains the code used in the following study: "Evaluating an automated machine learning model that predicts visual outcomes in patients with neovascular age-related macular degeneration". We kindly also refer the reader to the Video attached in the appendix of this study, which demonstrates how we were able to run the What-if Tool on an AutoML model.
 
