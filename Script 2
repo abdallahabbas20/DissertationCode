@@ -8,7 +8,7 @@ from sklearn.preprocessing import LabelEncoder
 
 
 #Loads training dataset (85% of complete dataset that has been randomly split as described in Methods)   
-dataframe = pandas.read_csv("./final_dissertation_amd_train_dataset.csv", header=0)
+dataframe = pandas.read_csv("./final_amd_train_dataset.csv", header=0)
 
 #Selecting the features and target label we will use to train the model
 dataframe = dataframe[["Age", 'Ethnicity', "Gender", "VA_ETDRS", "RPE_volume", "Intraretinal_fluid_volume", "Subretinal_fluid_volume", "Subretinal_hyper_reflect_volume", "Intraretinal_hyper_reflect_volume", "PED_volume", "VA_12months"]]
